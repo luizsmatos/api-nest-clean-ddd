@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { hash } from 'bcryptjs'
 import { z } from 'zod'
-import { PrismaService } from '@/infra/prisma/prisma.service'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe'
 
