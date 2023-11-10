@@ -5,7 +5,7 @@ services:
     container_name: nest-clean-postgres
     image: postgres
     ports:
-      - 5433:5432 # local:container
+      - 5432:5432 # local:container
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
