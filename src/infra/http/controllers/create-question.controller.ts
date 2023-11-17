@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
 import { User } from '@/infra/auth/user.decorator'
-import { PrismaService } from '@/infra/database/prisma/prisma.service'
+import { CreateQuestionUseCase } from '@/domain/forum/application/use-cases/create-question'
 
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe'
 
@@ -18,7 +18,7 @@ type CreateQuestionBody = z.infer<typeof createQuestionBodySchema>
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
 export class CreateQuestionController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private createQuestion: CreateQuestionUseCase) {}
 
   @Post()
   async handle(
@@ -30,25 +30,11 @@ export class CreateQuestionController {
     const { title, content } = body
     const userId = user.sub
 
-    await this.prisma.question.create({
-      data: {
-        authorId: userId,
-        title,
-        content,
-        slug: this.convertToSlug(title),
-      },
+    await this.createQuestion.execute({
+      title,
+      content,
+      authorId: userId,
+      attachmentsIds: [],
     })
-  }
-
-  private convertToSlug(text: string) {
-    return text
-      .normalize('NFKD')
-      .toLocaleLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '')
-      .replace(/_/g, '-')
-      .replace(/--+/g, '-')
-      .replace(/-$/g, '')
   }
 }
